@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Percurso por Belém</title>
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilo.css">
+    <link rel="shortcut icon" href="img/livro.png" type="image/x-icon">
+</head>
+
+<body>
+    <div id="g">
+        <div class="top"><span class="tab" id="tab"></span><span class="hud" id="hud"></span></div>
+        <div class="main">
+            <div class="stage" id="stage"></div>
+            <div class="box" id="box" aria-live="polite"></div>
+        </div>
+        <nav class="nav">
+            <button class="nb" id="prev" aria-label="Voltar ao slide anterior"><svg class="ar" viewBox="0 0 8 10"
+                    aria-hidden="true">
+                    <path d="M8 0v10L0 5z" fill="currentColor" />
+                </svg>VOLTAR</button>
+            <div class="prog">
+                <div class="cnt" id="cnt"></div>
+                <div class="bar"><i id="bar"></i></div>
+            </div>
+            <button class="nb" id="next" aria-label="Avançar para o próximo slide">AVANÇAR<svg class="ar"
+                    viewBox="0 0 8 10" aria-hidden="true">
+                    <path d="M0 0v10l8-5z" fill="currentColor" />
+                </svg></button>
+        </nav>
+    </div>
+    <script>
+        /* =====================================================================
+           IMAGENS — preencha com o endereço (URL) ou caminho de cada imagem.
+           Deixe '' para mostrar o espaço reservado.
+           Ex.: 'https://meusite.com/foto.jpg'  ou  'img/ver-o-peso.jpg'
+           Cada cena usa uma imagem, que fica na tela durante todas as falas dela.
+           Para mudar o enquadramento, troque --img-fit (cover/contain) no CSS.
+           ===================================================================== */
+        const IMAGENS = {
+            capa: 'img/passeio1.jpeg',          // Passeio Sociolinguístico
+            cenas: [
+                'img/cena.jpeg',               // cena 0 
+                'img/aeroporto 1.jpeg',           // aeroporto 1
+                'img/aeroporto 2.jpeg',           // aeroporto 2
+                'img/aeroporto 3.jpeg',           // aeroporto 3
+                'img/docas 1.jpeg',           // docas 1
+                'img/docas 2.jpeg',           // docas 2
+                'img/docas 3.jpeg',           // docas 3
+                'img/mercado 1.jpeg',           // ver o peso 1
+                'img/mercado 2.jpeg',           // ver o peso 2
+                'img/mercado 3.jpeg',           // ver o peso 3
+                'img/igreja 1.jpeg',           // igreja 1
+                'img/igreja 2.jpeg',           // igreja 2
+                'img/igreja 3.jpeg',           // igreja 3
+                'img/teatro 1.jpeg',           // teatro 1
+                'img/teatro 2.jpeg',           // teatro 2
+                'img/teatro 3.jpeg',           // teatro 3
+                'img/final.jpeg'            // final
+            ]
+        };
+
+        /* ===== conteúdo original (textos, desafios e personagens) ===== */
+        const S = [
+            {t: 'Passeio Sociolinguístico em Belém do Pará', L: [['Narrador', 'Elaborado pela alunas: Ana Beatriz da Costa Guimarães, Dilma Costa Nogueira Dias e Lívia Neris Macedo']], //JAAAA
+            },
+
+            {t: '1. No aeroporto ✈️', L: [['Livia', 'Professor Bagno! Bem-vindo a Belém, égua! A gente ensaiou esse encontro a semana inteira.'],['Dilma', 'Eu trouxe até o caderno de campo, porque aqui a fala é cheia de coisa boa pra anotar.'], ['Marcos Bagno', 'Que alegria estar aqui! Meu ouvido já está funcionando desde o desembarque. O que vocês vão me mostrar?']],   //JAAA 
+            },
+            {t: '1. No aeroporto ✈️', L: [['Ana Beatriz', 'Três fenômenos que o senhor discute em A Língua de Eulália: o “mim” antes de verbo, as vogais “e” e “o” que viram “i” e “u”, e as formas antigas que o povo guardou. Cada um num canto da cidade.'], ['Marcos Bagno', 'Então vamos combinar uma coisa: ninguém aqui vai rir da fala de ninguém. Vamos ouvir e tentar entender por que as pessoas falam desse jeito.'], ['Livia', 'Combinado! Falar diferente não é falar errado, professor. Cada jeito de falar tem uma lógica e uma história.']],    
+            }, //jaaaa
+            {t: '1. No aeroporto ✈️', L: [['Dilma', 'O livro reserva a palavra “erro” para casos raros e individuais, como alguém dizer “cafalo” no lugar de “cavalo”, uma forma que nenhuma variedade do português registra. O resto é variação.'], ['Marcos Bagno', 'Bagno: Perfeito. Então, vamos?']],    
+            }, //jaaa
+
+            {t: '2. na estação das docas 🍹', L: [['Narrador', 'As meninas convidam o professor para começar o passeio. Animados com as descobertas que estão por vir, os quatro seguem para a Estação das Docas, onde poderão observar de perto a maneira como os belenenses se comunicam no dia a dia.'], ['Narrador', 'A primeira parada é na Estação das docas. Ao chegarem Lívia já identifica o primeiro fenômeno'], ['Moradora local', 'Mana, me empresta teu celular pra mim tirar uma foto desse pôr do sol? Tá pai d’égua!']],   
+            }, //jaaaaaaaaa
+            {t: '2. na estação das docas 🍹', L: [['Livia', 'Ouviu, professor? “Pra mim tirar”. Esse é o nosso primeiro caso! E ela falou sem nem perceber, saiu natural.'], ['Marcos Bagno', 'É assim que a língua funciona: ninguém para pra pensar na regra. Mas o que é que a escola enxerga de problema aí?'], ['Ana Beatriz', 'A regra tradicional diz que “mim” não pode ser sujeito. O certo seria “pra eu tirar”, porque quem tira a foto é o “eu”. Só que muita gente, até com faculdade, diz “pra mim tirar” e nem se dá conta.'], ['Marcos Bagno', 'Se tem lógica, qual é? Por que a construção aparece tanto?'], ['Dilma', 'O livro traz três hipóteses. A primeira é o cruzamento: o falante mistura “trouxe pra mim” com “pra eu escolher” e economiza, dizendo tudo de uma vez. Como o “mim” soa mais forte que o “eu”, ainda ganha um tom afetivo: a pessoa interessada sou eu'], ['Livia', 'A segunda é a dança das cadeiras. A preposição “pra” chega primeiro e já pede o pronome oblíquo, o “mim”. Quando o verbo chega, a vaga já foi ocupada.']]    
+            },
+            {t: '2. na estação das docas 🍹', L: [['Ana Beatriz', ' E a terceira vem de frases que a própria norma aceita, como “É difícil pra mim fazer isso”, em que dá para mover o “pra mim”: “Pra mim, é difícil fazer isso”. Aí o falante generaliza a ideia e usa o “pra mim” também onde esse deslocamento não funciona.'], ['Marcos Bagno', 'E dizer que “mim não faz nada”? A própria gramática não aceita um oblíquo como sujeito de infinitivo em alguns casos?'], ['Dilma', 'Aceita, sim! Em “deixa-me ver” e “vi-me jogar”, o “me” é sujeito do infinitivo. Então a ideia de que só o “eu” pode ser sujeito não é tão firme. Aliás, no Brasil, quase todo mundo diz “deixa eu ver'], ['Livia', 'E não é coisa de agora! O livro lembra que um escritor do século XIX, o Taunay, registrou “pra mim atalhar” em 1872, num romance, e comentou que era um erro comum no interior, até entre gente instruída.'], ['Ana Beatriz', 'O pior é o preconceito. O livro cita um comentarista que associou o “pra mim fazer” a “índio”, uma ofensa dupla, contra os falantes e contra os povos indígenas. A proposta do livro é outra: ensinar a norma-padrão de forma crítica, mostrando que “pra eu fazer” tem prestígio social, mas que “pra mim fazer” também tem lógica.'], ['Marcos Bagno', 'Então o problema não é linguístico, é social. Anotado!']]   
+            },
+
+            {t: '3. no mercado do ver-o-peso 🛒', L: [['Narrador', 'Depois de se despedirem da moça, o professor e as alunas continuam o passeio. Enquanto caminham, Lívia comenta que ainda há muito a descobrir sobre a fala paraense. O grupo segue em direção ao Ver-o-Peso, onde o movimento das barracas e a conversa dos feirantes prometem novos exemplos da riqueza da língua.'], ['Narrador', 'Professor e alunas seguem passeio em direção ao Mercado do Ver-o-peso'], ['Feirante', 'Vem, minino! Cumida boa, bunita e barata, égua! Leva pra tua mãe, que ela vai gostar!'], ['Livia', 'Professor, aqui está a nossa segunda parada. Repara em “minino”, “cumida” e “bunita”.'], ['Marcos Bagno', 'Ouvi! O “e” virou “i” e o “o” virou “u”. Mas isso só acontece nessas palavras ou existe uma regra?']],     
+            },
+            {t: '3. no mercado do ver-o-peso 🛒', L: [['Dilma', 'Existe, e o livro chama de harmonização vocálica. Quando a sílaba mais forte da palavra tem “i” ou “u”, ela “puxa para cima” o “e” ou o “o” que vem antes: menino vira minino, comida vira cumida, bonita vira bunita, segundo vira sigundo.'], ['Ana Beatriz', ' Tem outro caso: depois de “b” ou “m”, o “o” também fecha em “u”, como em bolacha que vira bulacha, boneca que vira buneca. Os lábios acabam de se fechar para o “b” ou o “m” e já “espremem” o “o” num “u”.'], ['Marcos Bagno', 'Mas isso é coisa de feirante, de quem tem pouco estudo?'], ['Livia', 'Nada! O livro explica que a redução das vogais acontece no mundo todo onde se fala português, e que muita gente culta pronuncia desse jeito. O que varia é a intensidade: em São Paulo ela é menos forte, e o livro levanta uma hipótese ligada à imigração italiana.']],     
+            },
+            {t: '3. no mercado do ver-o-peso 🛒', L: [['Marcos Bagno', 'Mas muita gente acha que falar “do jeito que se escreve” é falar mais certo.'], ['Dilma', ' O livro desmonta isso: se os paulistas falassem como se escreve, ninguém diria “Sampaulo” nem “adevogado”. A escrita é um conjunto de símbolos, e cada falante lê esses símbolos do seu jeito, como um sinal de trânsito que cada língua lê à sua maneira.'], ['Ana Beatriz', 'Por isso a orientação para a escola é simples: a pessoa pode falar “bonito” ou “bunito”, “menino” ou “minino”, mas na hora de escrever é BONITO e MENINO, porque a ortografia precisa ser uma só para todo mundo se entender.'], ['Marcos Bagno', 'E então, quem fala mais certo?'], ['Livia', 'Ninguém fala “mais certo”, professor. O que existe é diferença, e toda diferença tem explicação na história da língua ou de quem fala.'], ['Dilma', ' O que muda é o prestígio de quem fala: o feirante vira piada, o doutor que diz “cumida” passa batido.']],     
+            },
+
+            {t: '4. Na Basílica de Nazaré ⛪', L: [['Narrador', 'Após agradecerem ao feirante pelos exemplos, as meninas convidam o professor a seguir para a próxima parada. No caminho até a Basílica de Nazaré, Bagno comenta que a língua também guarda marcas de outras épocas. Curiosas, as alunas se perguntam quais palavras antigas ainda sobrevivem na fala dos paraenses.'], ['Moradora Local', 'Entonce, minha fia, alembra de alevantar cedinho pro Círio. Despois a gente vai escuitar a missa e eu vou na procissão contigo.'] ,['Marcos Bagno', 'Cheguei no lugar certo! “Entonce”, “alembrar”, “alevantar”, “despois”, “escuitar”... Vocês sabem que não é “erro”, não sabem?'], ['Ana Beatriz', 'Sabemos! São arcaísmos: formas antigas que já fizeram parte da língua literária e saíram de moda, mas o povo conservou. O livro mostra que muitos verbos assim aparecem n’Os Lusíadas, de Camões, publicado em 1572, apenas 72 anos depois de 1500.']],
+            },
+            {t: '4. Na Basílica de Nazaré ⛪', L: [['Dilma', 'Esses verbos com “a-” vêm da preposição latina ad, usada como prefixo. Com o tempo, o português generalizou esse “a-” em muitos verbos. Depois, os gramáticos de Portugal quiseram fixar uma norma oficial e eliminaram alguns deles, como “alumiar” e “alembrar”.'], ['Livia', 'Mas a norma não “colou” com o povo. A maioria não lia nem escrevia, não tinha acesso à norma oficial, e continuou usando as formas que já conhecia. E essas formas atravessaram o oceano com os colonizadores e ficaram aqui.'], ['Marcos Bagno', 'Então o português de Cabral não era como o de um português de hoje?'], ['Ana Beatriz', 'Não! Em 1500, o português falado era bem mais parecido com o do brasileiro de hoje. O livro chama de distorção histórica as novelas e filmes em que Cabral fala com o sotaque português moderno.']],
+            },
+            {t: '4. Na Basílica de Nazaré ⛪', L: [['Dilma', 'E tem mais: “entonce” vem do latim in tunce, “despois” vem de de ex post, e “escuitar” vem de ascultare. Repara como parecem o espanhol: entonces, después.'], ['Marcos Bagno', 'E no português culto? Também temos arcaísmos?'], ['Livia', 'Temos! “Vou no cinema” e “cheguei em casa” já aparecem em escritores portugueses antigos. “Ele me chamou de ignorante” também, e o nosso “estou falando” é o gerúndio que Camões usava; o “estou a falar” de Portugal é que é uma inovação mais recente.'], ['Marcos Bagno', ' Então, quando alguém está falando “errado”, às vezes está só falando “antigo”.'], ['Dilma', 'Isso! E quem ri da fala da senhora está rindo de um pedaço da história do português.']],
+            },
+
+            {t: '5. no Theatro da Paz 🎭', L: [['Narrador', 'Depois de se despedirem da senhora e da neta, o grupo retoma o passeio. O professor aproveita o caminho até o Theatro da Paz para conversar com as alunas sobre tudo o que aprenderam. Com a chegada da noite e as luzes do teatro iluminando a praça, os quatro se acomodam na escadaria para relembrar as descobertas do dia.'], ['Marcos Bagno', 'Foi uma tarde generosa, meninas. Quem me ajuda a juntar tudo?'], ['Livia', 'Nas Docas, ouvimos o “pra mim tirar”. Vimos que ele nasce da mistura de duas frases, da preposição que puxa o pronome e de contextos que a própria norma aceita. Tem lógica, mas sofre preconceito.']],
+            },
+            {t: '5. no Theatro da Paz 🎭', L: [['Dilma', 'No Ver-o-Peso, “minino” e “cumida” mostraram a harmonização vocálica, um processo natural do português, que também aparece na fala culta. Falar “do jeito que se escreve” não é falar mais certo.'], ['Ana Beatriz', 'E na Basílica, “alembrar”, “entonce” e “despois” mostraram que o que parece erro muitas vezes é herança do português de séculos atrás, que o povo conservou quando a norma oficial deixou essas formas de lado.'], ['Marcos Bagno', 'E o que une os três casos?'], ['Dilma', 'Que o problema não é linguístico, é social: as formas ganham ou perdem prestígio conforme quem as fala.']],
+            },
+            {t: '5. no Theatro da Paz 🎭', L: [['Livia', 'Por isso a escola deve ensinar a norma-padrão, sim, mas de forma crítica, sem humilhar quem fala outro jeito. A língua que a pessoa fala faz parte de quem ela é.'], ['Marcos Bagno', 'Então fica combinado: valorizar toda variação e ensinar a norma com respeito. E agora, alguém me paga um sorvete de taperebá?'], ['Dilma', 'Pago eu! Mas o senhor vai dizer “pra eu pagar” ou “pra mim pagar”?'], ['Marcos Bagno', 'Hoje eu fico com a surpresa! (risos)']],
+            },
+
+            {t: '🎉 Parabéns, Observador da Língua! 🎉', L: [['NArrador', 'Ao longo dessa jornada, você descobriu que as diferentes formas de falar têm sua própria lógica, história e riqueza. Aprendeu que aquilo que muitas vezes é considerado erro é na verdade, uma manifestação da diversidade linguística. Continue ouvindo e valorizando os diferentes jeitos de falar, porque conhecer uma língua também é respeitar as pessoas e suas histórias! A língua varia, a cultura vive e o respeito transforma']], end: 1 
+            }
+        ];
+        const COL = { 'Marcos Bagno': '#5AA9F0', 'Livia': '#2FBF71', 'Dilma': '#FFC93C', 'Ana Beatriz': '#FF5FA2', 'moradora local': '#FF7A3D', 'Estudante': '#2FBF71', 'Narrador': '#FF7A3D' };
+
+        /* ===== slides: cada fala, cada desafio, a capa e o final ===== */
+        const steps = [{ k: 'start' }];
+        S.forEach((s, i) => {
+            s.L.forEach((_, j) => steps.push({ k: 'say', si: i, li: j }));
+            if (s.Q) steps.push({ k: 'quiz', si: i });
+        });
+        steps.push({ k: 'end' });
+        const MAX = S.filter(s => s.Q).length * 10;
+
+        let n = 0, lastN = -1, A = {};   // A[cena] = { tries, done, got, wrong[] }
+        const $ = id => document.getElementById(id);
+        const box = $('box'), tab = $('tab'), hud = $('hud'), stage = $('stage');
+        const prev = $('prev'), next = $('next'), cnt = $('cnt'), bar = $('bar');
+
+        const esc = s => s.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+        const st = i => A[i] || (A[i] = { tries: 0, done: false, got: 0, wrong: [] });
+        const pts = () => Object.values(A).reduce((a, b) => a + b.got, 0);
+
+        /* ---------- imagem / espaço reservado ---------- */
+        const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16"/><circle cx="9" cy="10" r="2"/><path d="M3 18l6-5 4 3 3-2 5 4"/></svg>';
+
+        function placeholder(msg, label) {
+            stage.innerHTML = '<div class="ph">' + ICON + '<div class="ph-t"></div><div class="ph-s"></div></div>';
+            stage.querySelector('.ph-t').textContent = msg;
+            stage.querySelector('.ph-s').textContent = label;
+        }
+
+        function setStage(key, label) {
+            if (stage.dataset.key === String(key)) return;   // mesma cena: não recarrega a imagem
+            stage.dataset.key = key;
+            const src = key === 'capa' ? IMAGENS.capa : IMAGENS.cenas[key];
+            if (!src) return placeholder('ESPAÇO PARA IMAGEM', label);
+            stage.innerHTML = '';
+            const im = new Image();
+            im.alt = label; im.decoding = 'async';
+            im.onerror = () => placeholder('A IMAGEM NÃO CARREGOU', label);
+            im.src = src;
+            stage.appendChild(im);
+        }
+
+        /* ---------- telas ---------- */
+        const STAR = '<svg class="qs" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 15.1,8.6 22.3,9.5 17,14.5 18.4,21.6 12,18.1 5.6,21.6 7,14.5 1.7,9.5 8.9,8.6"/></svg>';
+        /* luminância: decide se o texto sobre uma cor deve ser escuro ou claro */
+        const lum = hex => {
+            const c = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255).map(v => v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4));
+            return .2126 * c[0] + .7152 * c[1] + .0722 * c[2];
+        };
+
+        function showStart() {
+            box.innerHTML = '<div class="big"><h1>PASSEIO SOCIOLINGUÍTICO EM BELÉM DO PARÁ</h1><div class="txt">Jogo eletrônico elaborado para a disciplina de Práticas de Componente Curricular.</div><button class="btn" data-act="go">COMEÇAR PERCURSO</button></div>';
+        }
+
+        function showSay(s) {
+            const l = S[s.si].L[s.li], c = COL[l[0]] || '#173a7a', light = lum(c) > .18;
+            box.innerHTML = '<div class="row"><div class="por" style="background:' + c + ';color:' + (light ? 'var(--purple)' : '#fff') + '">' + l[0][0] + '</div><div><div class="who" style="color:' + (light ? c : 'var(--gold)') + '">' + l[0] + '</div><div class="txt">' + esc(l[1]) + '</div></div></div><div class="hint">toque para continuar ▶</div>';
+        }
+
+        function showQuiz(si) {
+            const q = S[si].Q, a = st(si);
+            let h = '<div class="qh">' + STAR + '<span class="qt">DESAFIO</span></div><div class="txt">' + esc(q.q) + '</div>';
+            h += q.o.map((o, i) => {
+                const cls = a.done && i === q.a ? ' ok' : a.wrong.includes(i) ? ' bad' : '';
+                const dis = a.done || a.wrong.includes(i) ? ' disabled' : '';
+                return '<button class="o' + cls + '" data-act="opt" data-i="' + i + '"' + dis + '>' + esc(o) + '</button>';
+            }).join('');
+            h += '<div class="txt fb" id="fb">';
+            if (a.done) h += '<span style="color:var(--ok)">Correto! +' + a.got + ' ★</span>';
+            else if (a.tries) h += '<span style="color:var(--bad)">Ainda não.</span> <span style="color:var(--orange)">Dica:</span> ' + esc(q.h);
+            box.innerHTML = h + '</div>';
+        }
+
+        function showEnd() {
+            const p = pts(), f = p / MAX;
+            const r = f >= 55 / 60 ? 'Mestre da Língua de Eulália' : f >= 35 / 60 ? 'Explorador(a) de Belém' : 'Aprendiz do Percurso';
+            const skipped = S.filter((s, i) => s.Q && !(A[i] && A[i].done)).length;
+            box.innerHTML = '<div class="big"><div class="star">' + STAR + '</div><h1>PERCURSO CONCLUÍDO!</h1><div class="txt">Você concluiu o passeio pela língua de Belém e conquistou o selo Observador da Língua! 🥇:p ★<br><br></div><button class="btn orange" data-act="reset">JOGAR DE NOVO</button></div>';
+        }
+
+        /* ---------- render ---------- */
+        function render() {
+            const s = steps[n];
+            let title, key, label;
+            if (s.k === 'start') { title = 'Belém – PA'; key = 'capa'; label = 'A Língua de Eulália' }
+            else if (s.k === 'end') { key = S.length - 1; title = label = S[key].t }
+            else { key = s.si; title = label = S[s.si].t }
+
+            tab.textContent = title;
+            hud.textContent = '★ ' + pts();
+            setStage(key, label);
+
+            if (s.k === 'start') showStart();
+            else if (s.k === 'say') showSay(s);
+            else if (s.k === 'quiz') showQuiz(s.si);
+            else showEnd();
+
+            if (n !== lastN) box.scrollTop = 0;
+            lastN = n;
+            box.classList.toggle('tap', s.k === 'say');
+
+            prev.disabled = n === 0;
+            next.disabled = n === steps.length - 1;
+            cnt.textContent = (n + 1) + ' / ' + steps.length;
+            bar.style.width = ((n + 1) / steps.length * 100) + '%';
+        }
+
+        /* ---------- ações ---------- */
+        function go(d) {
+            const m = Math.max(0, Math.min(steps.length - 1, n + d));
+            if (m !== n) { n = m; render() }
+        }
+
+        function pick(si, i) {
+            const q = S[si].Q, a = st(si);
+            if (a.done || a.wrong.includes(i)) return;
+            if (i === q.a) { a.done = true; a.got = a.tries ? 5 : 10 }
+            else { a.tries++; a.wrong.push(i) }
+            render();
+            const fb = $('fb'); if (fb) fb.scrollIntoView({ block: 'nearest' });
+        }
+
+        box.addEventListener('click', e => {
+            const b = e.target.closest('button');
+            if (!b) { if (steps[n].k === 'say') go(1); return }
+            const act = b.dataset.act;
+            if (act === 'opt') pick(steps[n].si, +b.dataset.i);
+            else if (act === 'go') go(1);
+            else if (act === 'reset') { A = {}; n = 0; render() }
+        });
+
+        prev.addEventListener('click', () => go(-1));
+        next.addEventListener('click', () => go(1));
+
+        /* teclado: ← → (ou PageUp/PageDown); Enter/Espaço avançam nas falas */
+        document.addEventListener('keydown', e => {
+            if (e.altKey || e.ctrlKey || e.metaKey) return;
+            const onBtn = e.target.closest && e.target.closest('button');
+            if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(1) }
+            else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(-1) }
+            else if ((e.key === 'Enter' || e.key === ' ') && !onBtn && (steps[n].k === 'say' || steps[n].k === 'start')) { e.preventDefault(); go(1) }
+        });
+
+        /* toque: deslizar para a esquerda avança, para a direita volta */
+        let tx = 0, ty = 0;
+        $('g').addEventListener('touchstart', e => { const t = e.changedTouches[0]; tx = t.clientX; ty = t.clientY }, { passive: true });
+        $('g').addEventListener('touchend', e => {
+            const t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty;
+            if (Math.abs(dx) > 50 && Math.abs(dx) > 1.5 * Math.abs(dy)) go(dx < 0 ? 1 : -1);
+        }, { passive: true });
+
+        render();
+    </script>
+</body>
+
+</html>

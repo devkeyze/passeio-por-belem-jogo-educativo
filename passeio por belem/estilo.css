@@ -1,0 +1,418 @@
+        :root {
+            /* azuis (base) */
+            --bg: #eee1cf;
+            --navy: #0f2a5c;
+            --navy2: #173a7a;
+            --blue: #2b55a8;
+            --ink: #fff;
+            /* acentos */
+            --purple: #2B1B4E;
+            --gold: #FFC93C;
+            --green: #2FBF71;
+            --orange: #FF7A3D;
+            --pink: #FF5FA2;
+            --ok: var(--green);
+            --bad: var(--pink);
+            /* como a imagem ocupa o espaço: cover = preenche cortando; contain = mostra inteira com sobras */
+            --img-fit: cover;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        /* a unidade-base escala com a tela: tudo abaixo usa rem */
+        html {
+            font-size: clamp(12px, calc(.6vw + .9vh + 4px), 24px)
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0
+        }
+
+        body {
+            background: var(--bg);
+            font-family: 'Silkscreen', 'Courier New', monospace;
+            color: var(--ink);
+            overflow: hidden;
+            overscroll-behavior: none;
+            touch-action: manipulation;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        /* o jogo ocupa 100% da janela, respeitando as áreas seguras (notch) */
+        #g {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            padding:
+                max(.6rem, env(safe-area-inset-top)) max(.6rem, env(safe-area-inset-right)) max(.6rem, env(safe-area-inset-bottom)) max(.6rem, env(safe-area-inset-left));
+        }
+
+        button:focus-visible {
+            outline: 3px solid var(--gold);
+            outline-offset: 2px
+        }
+
+        /* ---------- topo ---------- */
+        .top {
+            display: flex;
+            gap: .5rem;
+            align-items: stretch;
+            justify-content: space-between
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 0;
+            background: var(--navy);
+            border: 3px solid var(--navy2);
+            padding: .5rem .8rem;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .hud {
+            white-space: nowrap;
+            background: var(--purple);
+            border: 3px solid var(--navy2);
+            padding: .5rem .8rem;
+            font-size: 1rem;
+            color: var(--gold);
+        }
+
+        /* ---------- área principal: imagem + diálogo (com margem ao redor) ---------- */
+        .main {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-rows: minmax(0, 1fr) auto;
+            gap: .8rem;
+            padding: clamp(.3rem, 2vh, 1.5rem) clamp(.3rem, 2vw, 1.5rem);
+        }
+
+        /* telas largas (computador, celular deitado): imagem à esquerda, diálogo à direita */
+        @media (min-aspect-ratio: 4/3) {
+            .main {
+                grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+                grid-template-rows: minmax(0, 1fr);
+                gap: clamp(1rem, 3.5vw, 3.5rem);
+                padding: clamp(.5rem, 6vh, 3rem) clamp(1rem, 4vw, 4rem);
+            }
+
+            .main .box {
+                height: auto
+            }
+        }
+
+        /* telas muito baixas: menos margem vertical para sobrar espaço útil */
+        @media (max-height: 480px) {
+            .main {
+                padding-block: .4rem
+            }
+        }
+
+        /* ---------- espaço da imagem ---------- */
+        .stage {
+            position: relative;
+            min-height: 0;
+            overflow: hidden;
+            border: 4px solid var(--purple);
+            background: repeating-conic-gradient(#1a3f86 0 25%, #173a7a 0 50%) 0 0 / 24px 24px;
+        }
+
+        .stage img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: var(--img-fit);
+            display: block;
+        }
+
+        .ph {
+            position: absolute;
+            inset: .7rem;
+            border: 3px dashed rgba(255, 255, 255, .55);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            padding: 1rem;
+            text-align: center;
+            color: rgba(255, 255, 255, .85);
+        }
+
+        .ph svg {
+            width: 3.5rem;
+            height: 3.5rem
+        }
+
+        .ph-t {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--gold)
+        }
+
+        .ph-s {
+            font-size: .85rem;
+            line-height: 1.4
+        }
+
+        /* ---------- caixa de diálogo ---------- */
+        .box {
+            min-height: 0;
+            height: clamp(13rem, 40vh, 26rem);
+            height: clamp(13rem, 40dvh, 26rem);
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            background: var(--navy);
+            border: 4px solid #fff;
+            outline: 4px solid var(--purple);
+            padding: 1rem;
+        }
+
+        .box>* {
+            flex: none
+        }
+
+        .box.tap {
+            cursor: pointer
+        }
+
+        .row {
+            display: flex;
+            gap: .8rem;
+            align-items: flex-start
+        }
+
+        .por {
+            flex: 0 0 4rem;
+            height: 4rem;
+            border: 3px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .who {
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: .4rem;
+            color: var(--gold)
+        }
+
+        .txt {
+            font-size: 1rem;
+            line-height: 1.55
+        }
+
+        .hint {
+            font-size: .8rem;
+            opacity: .7;
+            margin-top: auto;
+            padding-top: .6rem;
+            text-align: right
+        }
+
+        .fb {
+            margin-top: .8rem
+        }
+
+        /* cabeçalho do desafio: estrela + título grande */
+        .qh {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            margin-bottom: .7rem
+        }
+
+        .qt {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold)
+        }
+
+        .qs {
+            width: 2.2rem;
+            height: 2.2rem;
+            flex: none;
+            fill: rgb(255, 78, 78);
+            stroke: white;
+            stroke-width: 1.5;
+            stroke-linejoin: round;
+        }
+
+        button.o {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin-top: .6rem;
+            background: var(--navy2);
+            color: #fff;
+            border: .15rem solid #fff;
+            padding: .65rem .8rem;
+            font: inherit;
+            font-size: 1rem;
+            line-height: 1.35;
+            cursor: pointer;
+            box-shadow: 0 .25rem 0 var(--purple);
+        }
+
+        button.o:hover:not(:disabled) {
+            background: var(--blue)
+        }
+
+        button.o:active:not(:disabled) {
+            background: var(--blue);
+            transform: translateY(.15rem);
+            box-shadow: 0 .1rem 0 var(--purple)
+        }
+
+        button.o:disabled {
+            cursor: default
+        }
+
+        button.o.ok {
+            background: var(--green);
+            color: var(--purple)
+        }
+
+        button.o.bad {
+            background: var(--pink);
+            color: var(--purple)
+        }
+
+        .big {
+            text-align: center;
+            padding: .6rem;
+            margin: auto 0
+        }
+
+        .big h1 {
+            font-size: 1.6rem;
+            color: var(--gold);
+            margin: .4rem 0
+        }
+
+        .star .qs {
+            width: 3.2rem;
+            height: 3.2rem;
+            fill: rgb(235, 235, 235);
+            stroke: rgb(255, 0, 0)
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: .8rem;
+            background: var(--gold);
+            color: var(--purple);
+            border: 3px solid #fff;
+            padding: .7rem 1.1rem;
+            font: inherit;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            box-shadow: 0 .3rem 0 var(--purple);
+        }
+
+        .btn.green {
+            background: var(--green)
+        }
+
+        .btn.orange {
+            background: var(--orange)
+        }
+
+        .btn:active {
+            transform: translateY(.2rem);
+            box-shadow: 0 .1rem 0 var(--purple)
+        }
+
+        /* ---------- barra de navegação ---------- */
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: .6rem
+        }
+
+        .nb {
+            flex: 0 0 auto;
+            min-width: 7.5rem;
+            min-height: 2.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            background: var(--gold);
+            color: var(--purple);
+            border: 3px solid var(--purple);
+            padding: .5rem .9rem;
+            font: inherit;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 .3rem 0 var(--purple);
+        }
+
+        .nb .ar {
+            width: .7rem;
+            height: .9rem;
+            flex: none
+        }
+
+        .nb:focus-visible {
+            outline-color: var(--purple)
+        }
+
+        .nb:disabled {
+            opacity: .4;
+            cursor: default
+        }
+
+        .nb:active:not(:disabled) {
+            transform: translateY(.2rem);
+            box-shadow: 0 .1rem 0 var(--purple)
+        }
+
+        .prog {
+            flex: 1;
+            min-width: 0;
+            text-align: center
+        }
+
+        .cnt {
+            font-size: .9rem;
+            font-weight: 700;
+            color: var(--purple);
+            margin-bottom: .3rem
+        }
+
+        .bar {
+            height: .7rem;
+            background: var(--purple);
+            border: 2px solid var(--navy2)
+        }
+
+        .bar i {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: var(--green);
+            transition: width .2s
+        }
+
+        @media (max-width: 420px) {
+            .nb {
+                min-width: 0;
+                padding: .5rem .6rem
+            }
+        }
